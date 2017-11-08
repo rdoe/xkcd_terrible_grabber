@@ -1,11 +1,8 @@
-# pylint: disable=invalid-name
-import requests
-from bs4 import BeautifulSoup
-from PIL import Image, ImageOps, ImageFont, ImageDraw
 import textwrap
 import os
-from multiprocessing import Queue
-import idna
+import requests
+from bs4 import BeautifulSoup
+from PIL import Image, ImageFont, ImageDraw
 
 base_url = 'http://xkcd.com'
 site_status = requests.get(base_url)
@@ -26,7 +23,7 @@ if site_status.status_code == 200:
     print("Alt comic title: {}".format(alt_comic_title))
 
     #Download the image using the alt-title as the actual title
-    comic_img = open(comic_title + "_tmp.png",'wb')
+    comic_img = open(comic_title + "_tmp.png", 'wb')
     comic_img.write(requests.get(comic_url).content)
     comic_img.close()
 
@@ -39,19 +36,19 @@ if site_status.status_code == 200:
     comic_size = saved_comic.size
 
     #Create a new image to put the text on
-    text_img = Image.new("RGB", comic_size, color='white') 
+    text_img = Image.new("RGB", comic_size, color='white')
     draw = ImageDraw.Draw(text_img) #Clean slate the image
 
     #create array split by width (avg char is 7px)
-    lines = textwrap.wrap(alt_comic_title, width=(comic_size[0] / 7)) 
+    lines = textwrap.wrap(alt_comic_title, width=(comic_size[0] / 7))
     line_print_counter = 0
 
-    width, height = font.getsize(lines[0]) 
+    width, height = font.getsize(lines[0])
 
     #Print line by line the text
     for line in lines:
         width, height = font.getsize(line)
-        draw.text((0 , line_print_counter), line,'black',font=font)
+        draw.text((0, line_print_counter), line, 'black', font=font)
         line_print_counter += height
 
     draw = ImageDraw.Draw(text_img)
@@ -60,19 +57,19 @@ if site_status.status_code == 200:
 
     #If the image is less than 300, do side by side
     if comic_size[0] < 300:
-        final_img= Image.new("RGB", (comic_size[0] * 2, comic_size[1]))
+        final_img = Image.new("RGB", (comic_size[0] * 2, comic_size[1]))
         saved_comic.copy()
-        final_img.paste(saved_comic,(0,0))
+        final_img.paste(saved_comic, (0, 0))
 
         text_img.copy()
-        final_img.paste(text_img,(comic_size[0], 0))
+        final_img.paste(text_img, (comic_size[0], 0))
     else:
-        final_img= Image.new("RGB", (comic_size[0], comic_size[1] * 2))
+        final_img = Image.new("RGB", (comic_size[0], comic_size[1] * 2))
         saved_comic.copy()
-        final_img.paste(saved_comic,(0,0))
+        final_img.paste(saved_comic, (0, 0))
 
         text_img.copy()
-        final_img.paste(text_img,(0, comic_size[1]))
+        final_img.paste(text_img, (0, comic_size[1]))
 
     #Show it and save it
     final_img.show()
