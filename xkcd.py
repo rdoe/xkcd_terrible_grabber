@@ -7,7 +7,7 @@ from PIL import Image, ImageFont, ImageDraw
 base_url = 'http://xkcd.com'
 site_status = requests.get(base_url)
 
-#Only continue if the site is online
+#Only continue if the site is online else give an error message
 if site_status.status_code == 200:
 
     site_content = BeautifulSoup(site_status.content, 'html.parser')
